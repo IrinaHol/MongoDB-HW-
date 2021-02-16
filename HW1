@@ -1,0 +1,26 @@
+db.getCollection('students').find({
+     "avgScore" : 4.2
+    })
+db.getCollection('students').find({
+     "class" : 1
+    })
+
+db.getCollection('students').find({
+     "parents.profession" : "scientist"
+    })
+db.getCollection('students').find({
+     avgScore: {$gt: 4}
+    })
+    
+db.getCollection('students').aggregate([
+{
+$group: 
+     {
+     _id: 0,
+         bestMarkStudent: 
+         {
+         $max: "$avgScore"
+         }
+     }
+ }
+])
