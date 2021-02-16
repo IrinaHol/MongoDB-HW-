@@ -1,18 +1,24 @@
-db.getCollection('students').find({
+1) db.getCollection('students').find({
      "avgScore" : 4.2
     })
-db.getCollection('students').find({
+    
+2) db.getCollection('students').find({
      "class" : 1
     })
-
-db.getCollection('students').find({
+    
+3) db.getCollection('students').find({
+    lessons: "physics"
+    })
+    
+4) db.getCollection('students').find({
      "parents.profession" : "scientist"
     })
-db.getCollection('students').find({
+    
+5) db.getCollection('students').find({
      avgScore: {$gt: 4}
     })
     
-db.getCollection('students').aggregate([
+6) db.getCollection('students').aggregate([
 {
 $group: 
      {
@@ -24,3 +30,111 @@ $group:
      }
  }
 ])
+
+
+7) db.getCollection('students').aggregate([
+{
+$group: 
+     {
+     _id: 0,
+         worstMarkStudent: 
+         {
+         $min: "$avgScore"
+         }
+     }
+ }
+])
+8) db.getCollection('students').find({}).sort({avgScore: -1}).limit(3);
+
+db.getCollection('students').aggregate([
+{
+$group: 
+     {
+     _id: "$avgScore",
+          topStudents: {$sum: 1},
+     }
+ },
+ {
+  $sort: {
+   topStudents: 1,
+   _id: -1   
+ }
+ },
+ {$limit: {
+     topStudents: 3,
+
+     }
+ }   
+])
+
+
+9) db.getCollection('students').aggregate([
+{
+$group: 
+     {
+     _id: 0,
+         avgScoure: {
+         $avg: "$avgScore",
+             }
+     }
+ }
+])
+
+10) db.getCollection('students').aggregate([
+
+ {
+  $match : {
+  lessons:{$in:["mathematics", "physics"]}
+      }
+   
+  },
+  {
+$group: 
+     {
+     _id: 0,
+         avgScoure: {
+         $avg: "$avgScore",
+             }
+     }
+ }
+   
+   11) db.getCollection('students').aggregate([
+
+ {
+  $match : {
+  class:2 
+      }
+   
+  },
+  {
+$group: 
+     {
+     _id: 0,
+         avgScoure: {
+         $avg: "$avgScore",
+             }
+     }
+ }
+ 
+ 12) db.getCollection('students').find({
+    parents: {$not: {$size: 2}}
+}
+    )
+    13) db.getCollection('students').aggregate([
+    {$unwind: '$parents'},
+    {$match: {'parents.profession': {$exists: false} }},
+
+{
+    $project: {
+        parents: 1,
+        _id: 0
+    }
+}
+])
+
+14) db.getCollection('students').update(
+{'parents': {$exists: 1},
+'parents.profession': null},
+{$set: {'parents.$.profession': 'Waiter'}},
+{multi: true}
+)
